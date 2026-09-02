@@ -1,9 +1,0 @@
-let
-  Origen = Excel.Workbook(File.Contents("C:\Users\Usuario\Desktop\ANALISIS DE DATOS\Clase 6\Pipeline_ETL_Dataset.xlsx"), null, false),
-  categorias_sheet = Origen{[Item = "categorias", Kind = "Sheet"]}[Data],
-  #"Filtrar contenido nulo y espacios en blanco" = each List.Select(_, each _ <> null and (not (_ is text) or Text.Trim(_) <> "")),
-  #"Filas inferiores quitadas" = Table.RemoveLastN(categorias_sheet, each try List.IsEmpty(List.Skip(#"Filtrar contenido nulo y espacios en blanco"(Record.FieldValues(_)), 1)) otherwise false),
-    #"Encabezados promovidos" = Table.PromoteHeaders(#"Filas inferiores quitadas", [PromoteAllScalars=true]),
-    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"id_categoria", Int64.Type}, {"nombre_categoria", type text}, {"descripcion", type text}})
-in
-  #"Tipo cambiado"
